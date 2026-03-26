@@ -31,7 +31,6 @@ Desktop.ini
 
 # Model artifacts (large files)
 artifacts/*.parquet
-artifacts/*.json
 artifacts/*.pkl
 artifacts/*.joblib
 

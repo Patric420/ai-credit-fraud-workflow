@@ -1,0 +1,71 @@
+{
+  "rows": 500000,
+  "seed": 42,
+  "max_iter": 300,
+  "gpu_warmup": true,
+  "data_generation_seconds": 0.16348675100000065,
+  "cpu": {
+    "framework": "pandas+scikit-learn",
+    "timings_seconds": {
+      "cpu_feature_engineering": 0.008410764000004178,
+      "cpu_train_test_split": 0.2935784330000004,
+      "cpu_train": 15.899616941999994,
+      "cpu_inference_eval": 0.07169744100000486,
+      "cpu_end_to_end": 16.273303580000004
+    },
+    "metrics": {
+      "roc_auc": 0.7637757672059011,
+      "pr_auc": 0.41480298609520966,
+      "test_rows": 100000,
+      "fraud_rate_test": 0.10376
+    }
+  },
+  "gpu": {
+    "framework": "cuDF+cuML",
+    "available": true,
+    "timings_seconds": {
+      "gpu_to_cudf": 0.3190043300000056,
+      "gpu_feature_engineering": 1.7516604289999975,
+      "gpu_train_test_split": 1.1345957050000024,
+      "gpu_train": 0.9626566350000019,
+      "gpu_inference_eval": 6.733944758999996,
+      "gpu_end_to_end": 10.901861858000004
+    },
+    "metrics": {
+      "roc_auc": 0.7567436224694329,
+      "pr_auc": 0.40959595342143507,
+      "test_rows": 100000,
+      "fraud_rate_test": 0.10376
+    }
+  },
+  "speedups": {
+    "available": true,
+    "by_step": {
+      "feature_engineering": {
+        "cpu_seconds": 0.008410764000004178,
+        "gpu_seconds": 1.7516604289999975,
+        "speedup_x": 0.004801595024216986
+      },
+      "train_test_split": {
+        "cpu_seconds": 0.2935784330000004,
+        "gpu_seconds": 1.1345957050000024,
+        "speedup_x": 0.25875158147192157
+      },
+      "train": {
+        "cpu_seconds": 15.899616941999994,
+        "gpu_seconds": 0.9626566350000019,
+        "speedup_x": 16.516394697679473
+      },
+      "inference_eval": {
+        "cpu_seconds": 0.07169744100000486,
+        "gpu_seconds": 6.733944758999996,
+        "speedup_x": 0.010647167977459331
+      },
+      "end_to_end": {
+        "cpu_seconds": 16.273303580000004,
+        "gpu_seconds": 10.901861858000004,
+        "speedup_x": 1.4927086576554196
+      }
+    }
+  }
+}

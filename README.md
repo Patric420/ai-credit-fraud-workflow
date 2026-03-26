@@ -124,3 +124,81 @@ NVIDIA RAPIDS, integrated with AWS, transforms fraud detection pipelines by deli
 
 **Ready to supercharge your pipeline?** Explore NVIDIA RAPIDS and AWS GPU instances today to unlock the next level of speed and efficiency.
 
+---
+
+## Local GPU-Accelerated Workflow (RAPIDS + XGBoost)
+
+This repository now includes a local runnable script: `gpu_rapids_workflow.py`.
+
+What it does:
+- Generates synthetic transaction data with fraud labels
+- Applies feature engineering with **RAPIDS cuDF** when available
+- Trains an XGBoost classifier on **GPU** (`device=cuda`) when available
+- Saves model, metrics, and engineered parquet outputs
+
+### 1) Create environment and install dependencies
+
+CPU-compatible minimal dependencies:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate  # On Windows PowerShell: .venv\Scripts\Activate.ps1
+pip install -r requirements-local.txt
+```
+
+For NVIDIA RAPIDS GPU acceleration, install RAPIDS in a CUDA-compatible environment (example via conda):
+
+```bash
+conda create -n rapids-fraud -c rapidsai -c conda-forge -c nvidia \
+  rapids=24.10 python=3.11 cuda-version=12.0
+conda activate rapids-fraud
+pip install -r requirements-local.txt
+```
+
+### 2) Run workflow
+
+```bash
+python gpu_rapids_workflow.py --rows 50000 --output-dir artifacts
+```
+
+Force CPU run explicitly:
+
+```bash
+python gpu_rapids_workflow.py --rows 50000 --output-dir artifacts --force-cpu
+```
+
+### 3) Output artifacts
+
+Generated under `artifacts/`:
+- `fraud_xgb_model.json`
+- `metrics.json`
+- `engineered_transactions.parquet`
+
+---
+
+## CPU vs GPU Full-Pipeline Benchmark (pandas/scikit-learn vs cuDF/cuML)
+
+To run the end-to-end fraud pipeline twice and benchmark exact execution time for each step:
+
+```bash
+python fraud_pipeline_cpu_gpu_benchmark.py --rows 200000 --output-dir artifacts
+```
+
+What this benchmark does:
+- Uses the same synthetic fraud dataset for both runs
+- Runs full CPU pipeline with `pandas + scikit-learn`
+- Runs full GPU pipeline with `cuDF + cuML` (when available)
+- Prints live per-step timings and computes per-step speedup (`CPU seconds / GPU seconds`)
+- Writes full report to `artifacts/cpu_gpu_benchmark_report.json`
+
+If cuDF/cuML are unavailable in the current environment, the script still executes the CPU run and reports why GPU speedup is unavailable.
+
+### Optional: Visualize results in Streamlit
+
+```bash
+pip install -r requirements-local.txt
+streamlit run streamlit_benchmark_dashboard.py
+```
+
+By default, the dashboard reads `artifacts/cpu_gpu_benchmark_report.json`. You can also upload any benchmark JSON report from the sidebar.
+

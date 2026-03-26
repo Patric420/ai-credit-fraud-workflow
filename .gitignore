@@ -1,0 +1,43 @@
+# Virtual environments
+.venv/
+.venv-wsl/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Model artifacts (large files)
+artifacts/*.parquet
+artifacts/*.json
+artifacts/*.pkl
+artifacts/*.joblib
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.*

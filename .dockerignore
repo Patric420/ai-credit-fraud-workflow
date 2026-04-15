@@ -1,0 +1,9 @@
+.git
+.gitignore
+.venv
+.venv-wsl
+.vscode
+__pycache__
+*.ipynb
+inference
+model-training

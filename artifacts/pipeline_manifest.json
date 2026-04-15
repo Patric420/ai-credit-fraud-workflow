@@ -1,0 +1,23 @@
+{
+  "feature_columns": [
+    "tx_amount",
+    "customer_age",
+    "hour",
+    "terminal_risk",
+    "distance_from_home",
+    "velocity_1h",
+    "country_mismatch",
+    "amount_log",
+    "night_tx",
+    "amount_x_risk",
+    "late_hour_risk",
+    "mismatch_x_risk",
+    "distance_x_velocity",
+    "high_amount_flag"
+  ],
+  "model_path": "artifacts/fraud_xgb_model.json",
+  "train_metrics_path": "artifacts/metrics_train.json",
+  "inference_metrics_path": "artifacts/metrics_inference.json",
+  "engineered_data_path": "artifacts/engineered_transactions.parquet",
+  "inference_predictions_path": "artifacts/inference_predictions.parquet"
+}

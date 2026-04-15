@@ -1,2 +1,7 @@
-ray[data,train]
+--extra-index-url=https://pypi.nvidia.com
+cudf-cu12
+numpy
+pandas
+pyarrow
+scikit-learn
 xgboost

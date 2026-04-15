@@ -1,0 +1,8 @@
+{
+  "roc_auc": 0.9749197765514307,
+  "pr_auc": 0.8813266978635059,
+  "test_rows": 20000,
+  "fraud_rate_test": 0.08595,
+  "best_iteration": 112,
+  "scale_pos_weight": 3.2616033548814234
+}

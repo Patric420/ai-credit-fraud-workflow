@@ -19,6 +19,18 @@ def load_report_from_upload(uploaded_file) -> Dict[str, Any]:
     return json.load(uploaded_file)
 
 
+def load_xgb_pipeline_metrics(base_dir: Path) -> Dict[str, Any]:
+    train_path = base_dir / "metrics_train.json"
+    infer_path = base_dir / "metrics_inference.json"
+
+    if not train_path.exists() or not infer_path.exists():
+        return {"available": False}
+
+    train_metrics = json.loads(train_path.read_text(encoding="utf-8"))
+    infer_metrics = json.loads(infer_path.read_text(encoding="utf-8"))
+    return {"available": True, "train": train_metrics, "inference": infer_metrics}
+
+
 def build_timing_table(report: Dict[str, Any]) -> pd.DataFrame:
     cpu_timings = report.get("cpu", {}).get("timings_seconds", {})
     gpu_timings = report.get("gpu", {}).get("timings_seconds", {})
@@ -159,6 +171,30 @@ def render_speedups(report: Dict[str, Any]) -> None:
     st.bar_chart(chart)
 
 
+def render_xgb_pipeline_metrics(metrics_bundle: Dict[str, Any]) -> None:
+    st.subheader("Tuned XGBoost Pipeline (Latest Run)")
+    if not metrics_bundle.get("available", False):
+        st.info("No tuned XGBoost metrics found in artifacts/metrics_train.json and metrics_inference.json.")
+        return
+
+    train_metrics = metrics_bundle.get("train", {})
+    infer_metrics = metrics_bundle.get("inference", {})
+
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Train ROC AUC", f"{train_metrics.get('roc_auc', 0.0):.4f}")
+    c2.metric("Train PR AUC", f"{train_metrics.get('pr_auc', 0.0):.4f}")
+    c3.metric("Infer ROC AUC", f"{infer_metrics.get('roc_auc', 0.0):.4f}")
+    c4.metric("Infer PR AUC", f"{infer_metrics.get('pr_auc', 0.0):.4f}")
+
+    table = pd.DataFrame(
+        [
+            {"phase": "train", **train_metrics},
+            {"phase": "inference", **infer_metrics},
+        ]
+    )
+    st.dataframe(table, use_container_width=True)
+
+
 def main() -> None:
     st.set_page_config(page_title="Fraud CPU/GPU Benchmark", layout="wide")
 
@@ -178,8 +214,10 @@ def main() -> None:
         st.error(f"Could not load benchmark report: {exc}")
         st.stop()
 
+    xgb_metrics = load_xgb_pipeline_metrics(Path("artifacts"))
     render_header(report)
     render_metrics(report)
+    render_xgb_pipeline_metrics(xgb_metrics)
     render_timings(report)
     render_speedups(report)
 

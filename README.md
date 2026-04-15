@@ -133,8 +133,10 @@ This repository now includes a local runnable script: `gpu_rapids_workflow.py`.
 What it does:
 - Generates synthetic transaction data with fraud labels
 - Applies feature engineering with **RAPIDS cuDF** when available
-- Trains an XGBoost classifier on **GPU** (`device=cuda`) when available
-- Saves model, metrics, and engineered parquet outputs
+- Trains an XGBoost classifier on **GPU** (`device=cuda`) with class-imbalance handling
+- Uses early stopping for stronger generalization
+- Runs post-training high-volume inference and records throughput/latency + quality metrics
+- Saves model, train/inference metrics, prediction outputs, and a pipeline manifest
 
 ### 1) Create environment and install dependencies
 
@@ -158,7 +160,7 @@ pip install -r requirements-local.txt
 ### 2) Run workflow
 
 ```bash
-python gpu_rapids_workflow.py --rows 50000 --output-dir artifacts
+python gpu_rapids_workflow.py --rows 50000 --inference-rows 120000 --output-dir artifacts
 ```
 
 Force CPU run explicitly:
@@ -167,12 +169,27 @@ Force CPU run explicitly:
 python gpu_rapids_workflow.py --rows 50000 --output-dir artifacts --force-cpu
 ```
 
+Optional tuning knobs:
+
+```bash
+python gpu_rapids_workflow.py \
+  --rows 50000 \
+  --inference-rows 200000 \
+  --num-boost-round 400 \
+  --early-stopping-rounds 30 \
+  --decision-threshold 0.5 \
+  --output-dir artifacts
+```
+
 ### 3) Output artifacts
 
 Generated under `artifacts/`:
 - `fraud_xgb_model.json`
-- `metrics.json`
+- `metrics_train.json`
+- `metrics_inference.json`
 - `engineered_transactions.parquet`
+- `inference_predictions.parquet`
+- `pipeline_manifest.json`
 
 ---
 
@@ -202,3 +219,19 @@ streamlit run streamlit_benchmark_dashboard.py
 
 By default, the dashboard reads `artifacts/cpu_gpu_benchmark_report.json`. You can also upload any benchmark JSON report from the sidebar.
 
+### Run dashboard with Docker
+
+Build image:
+
+```bash
+docker build -t credit-1-dashboard .
+```
+
+Run container:
+
+```bash
+docker run --rm -p 8501:8501 credit-1-dashboard
+```
+
+Open:
+- `http://localhost:8501`

@@ -1,4 +1,4 @@
-# Accelerating Fraud Detection in Financial Services with NVIDIA RAPIDS on AWS
+# Accelerating Fraud Detection in Financial Services with NVIDIA RAPIDS on AWS-
 
 This repository demonstrates how to accelerate fraud detection workflows in financial services using **NVIDIA RAPIDS** on **AWS**. The project showcases a GPU-accelerated data pipeline that significantly improves processing speed and cost efficiency compared to traditional CPU-based workflows.
 
